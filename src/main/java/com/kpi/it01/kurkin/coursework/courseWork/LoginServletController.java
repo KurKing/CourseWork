@@ -19,7 +19,7 @@ public class LoginServletController extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/login.jsp");
         dispatcher.forward(request, response);
     }
 }
