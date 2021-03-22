@@ -47,7 +47,7 @@
 
 </head>
 <body>
-<div class="bg-contact2" style="background-image: url('images/bg-01.jpg');">
+<div class="bg-contact2" style="background-image: url('images/bg-02.jpg');">
     <div class="container-contact2">
         <div class="wrap-contact3">
             <table class="tender-table">
