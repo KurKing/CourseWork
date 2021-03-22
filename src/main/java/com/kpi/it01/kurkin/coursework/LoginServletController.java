@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.courseWork;
+package com.kpi.it01.kurkin.coursework;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
