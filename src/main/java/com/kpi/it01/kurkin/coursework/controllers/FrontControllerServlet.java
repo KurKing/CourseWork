@@ -2,6 +2,8 @@ package com.kpi.it01.kurkin.coursework.controllers;
 
 import com.kpi.it01.kurkin.coursework.dao.DataBase;
 import com.kpi.it01.kurkin.coursework.dao.FirebaseDataBase;
+import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
+import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
 import javax.servlet.*;
@@ -17,14 +19,8 @@ public class FrontControllerServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        try {
-            db = new FirebaseDataBase();
-        } catch (IOException e) {
-            System.out.println(e.getLocalizedMessage());
-            return;
-        }
-
-        userService = new UserService(db);
+        db = (DataBase) config.getServletContext().getAttribute("dataBase");
+        userService = (UserService) config.getServletContext().getAttribute("userService");
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response, String jspName)
@@ -38,22 +34,13 @@ public class FrontControllerServlet extends HttpServlet {
 
         switch (request.getPathInfo()) {
             case "/login":
-                userService.logIn(
-                        request.getParameter("email"),
-                        request.getParameter("password")
-                );
-                    processRequest(request, response,"tenders");
-                    break;
-
-//                request.setAttribute("message", "Incorrect password or email!");
-//                processRequest(request, response,"login");
-//
-//                break;
+                processRequest(request, response,"login");
+                break;
             case "/signup":
                 processRequest(request, response, "signup");
                 break;
             default:
-                processRequest(request, response, "tenders");
+                processRequest(request, response, "tendersList");
                 break;
         }
 
@@ -63,13 +50,36 @@ public class FrontControllerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         switch (request.getPathInfo()) {
             case "/login":
-                processRequest(request, response, "tenders");
+                try {
+
+                    request.getSession().setAttribute("user",
+                            userService.logIn(
+                                    request.getParameter("email"),
+                                    request.getParameter("password")
+                            )
+                    );
+                } catch (IncorrectPasswordException e) {
+
+                    request.setAttribute("errorMessage", "Incorrect password or email!");
+                    processRequest(request, response,"login");
+                    break;
+
+                } catch (NotSignUpException e) {
+
+                    request.setAttribute("errorMessage", "You should sign up first!");
+                    processRequest(request, response,"signup");
+                    break;
+
+                }
+
+                processRequest(request, response, "tendersList");
                 break;
+
             case "/signup":
-                processRequest(request, response, "tenders");
+                processRequest(request, response, "signup");
                 break;
             default:
-                processRequest(request, response, "tenders");
+                processRequest(request, response, "tendersList");
                 break;
         }
 

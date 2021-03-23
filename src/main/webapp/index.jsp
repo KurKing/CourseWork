@@ -1,1 +1,2 @@
-<% response.sendRedirect("tenders/"); %>
+<% response.sendRedirect("tenders/");%>
+
