@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="../css/main.css">
 
     <style>
+
         .tender-table {
             width: 100%;
         }
@@ -40,7 +41,6 @@
         .info-td{
             border-top: 1px solid black;
         }
-
         td{
             padding: 20px;
         }

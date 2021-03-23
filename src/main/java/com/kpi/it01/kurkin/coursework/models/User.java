@@ -11,6 +11,10 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
     public String getName() {
         return name;
     }
