@@ -1,9 +1,8 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.dao.DataBase;
-import com.kpi.it01.kurkin.coursework.dao.FirebaseDataBase;
+import com.kpi.it01.kurkin.coursework.dal.DataBase;
+import com.kpi.it01.kurkin.coursework.dal.FirebaseDataBase;
 import com.kpi.it01.kurkin.coursework.services.UserService;
-import org.apache.log4j.BasicConfigurator;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;

@@ -22,4 +22,13 @@ public class User {
     public boolean comparePassword(String passwordHash) {
         return  passwordHash.equals(this.passwordHash);
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", login='" + login + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                '}';
+    }
 }

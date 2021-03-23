@@ -1,6 +1,6 @@
 package com.kpi.it01.kurkin.coursework.services;
 
-import com.kpi.it01.kurkin.coursework.dao.DataBase;
+import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
@@ -24,14 +24,13 @@ public class UserService {
     public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException {
         try {
             password = PasswordHasher.getHash(password);
-            System.out.println(password);
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e.getLocalizedMessage());
         }
 
         User user = db.getUserByLogin(login);
 
-        if (user.comparePassword(password)) {
+        if (!user.comparePassword(password)) {
             throw new IncorrectPasswordException();
         }
 

@@ -1,9 +1,9 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.dao.DataBase;
-import com.kpi.it01.kurkin.coursework.dao.FirebaseDataBase;
+import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
+import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
 import javax.servlet.*;
@@ -32,7 +32,12 @@ public class FrontControllerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        switch (request.getPathInfo()) {
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            pathInfo = "/";
+        }
+
+        switch (pathInfo) {
             case "/login":
                 processRequest(request, response,"login");
                 break;
@@ -48,7 +53,13 @@ public class FrontControllerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        switch (request.getPathInfo()) {
+
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            pathInfo = "/";
+        }
+
+        switch (pathInfo) {
             case "/login":
                 try {
 
@@ -58,6 +69,7 @@ public class FrontControllerServlet extends HttpServlet {
                                     request.getParameter("password")
                             )
                     );
+
                 } catch (IncorrectPasswordException e) {
 
                     request.setAttribute("errorMessage", "Incorrect password or email!");
@@ -67,7 +79,7 @@ public class FrontControllerServlet extends HttpServlet {
                 } catch (NotSignUpException e) {
 
                     request.setAttribute("errorMessage", "You should sign up first!");
-                    processRequest(request, response,"signup");
+                    processRequest(request, response, "signup");
                     break;
 
                 }

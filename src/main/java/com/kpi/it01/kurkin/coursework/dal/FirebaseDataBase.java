@@ -1,10 +1,9 @@
-package com.kpi.it01.kurkin.coursework.dao;
+package com.kpi.it01.kurkin.coursework.dal;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -13,7 +12,6 @@ import com.kpi.it01.kurkin.coursework.models.User;
 import org.apache.log4j.BasicConfigurator;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -47,9 +45,10 @@ public class FirebaseDataBase implements DataBase {
 
     @Override
     public User getUserByLogin(String login) throws NotSignUpException {
-        if (db == null) {return null;}
+        if (db == null) { return null; }
         DocumentReference docRef = db.collection("users").document(login);
         DocumentSnapshot document;
+
         try {
             document = docRef.get().get();
         } catch (InterruptedException | ExecutionException e) {
