@@ -44,6 +44,10 @@ public class FrontControllerServlet extends HttpServlet {
             case "/signup":
                 processRequest(request, response, "signup");
                 break;
+            case "/logout":
+                request.getSession().removeAttribute("user");
+                processRequest(request, response, "tendersList");
+                break;
             default:
                 processRequest(request, response, "tendersList");
                 break;
@@ -72,7 +76,7 @@ public class FrontControllerServlet extends HttpServlet {
 
                 } catch (IncorrectPasswordException e) {
 
-                    request.setAttribute("errorMessage", "Incorrect password or email!");
+                    request.setAttribute("errorMessage", "Incorrect password!");
                     processRequest(request, response,"login");
                     break;
 

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html lang="en">
 <head>
     <title>Tenders</title>
@@ -51,18 +53,24 @@
     <div class="container-contact2">
         <div class="wrap-contact3">
             <table class="tender-table">
-                <tr>
-                    <td></td>
-                    <td align="right">
-                        <a href="${pageContext.request.contextPath}/tenders/login"><u>Log in</u></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="header-user-td">Hello, Oleksii!</td>
-                    <td align="right">
-                        <a href="${pageContext.request.contextPath}?action=logout"><u>Log out</u></a>
-                    </td>
-                </tr>
+                <c:choose>
+                    <c:when test="${!empty user}">
+                        <tr>
+                            <td class="header-user-td">Hello, <c:out value="${user.getName()}"/>!</td>
+                            <td align="right">
+                                <a href="${pageContext.request.contextPath}/tenders/logout"><u>Log out</u></a>
+                            </td>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <a href="${pageContext.request.contextPath}/tenders/login"><u>Log in</u></a>
+                            </td>
+                        </tr>
+                    </c:otherwise>
+                </c:choose>
                 <tr>
                     <td class="header-name-td">
                         <b>Tender name</b>
