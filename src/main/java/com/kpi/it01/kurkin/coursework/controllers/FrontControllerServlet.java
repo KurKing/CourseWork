@@ -32,6 +32,13 @@ public class FrontControllerServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
+    private void tendersList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        request.setAttribute("tenders", tenderService.getTenders());
+
+        processRequest(request, response, "tendersList");
+    }
+
     private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
 
@@ -61,7 +68,7 @@ public class FrontControllerServlet extends HttpServlet {
 
         }
 
-        processRequest(request, response, "tendersList");
+        tendersList(request, response);
     }
 
     private void signup(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -114,11 +121,10 @@ public class FrontControllerServlet extends HttpServlet {
                 break;
             case "/logout":
                 request.getSession().removeAttribute("user");
-                processRequest(request, response, "tendersList");
+                tendersList(request, response);
                 break;
             default:
-                request.setAttribute("tenders", tenderService.getTenders());
-                processRequest(request, response, "tendersList");
+                tendersList(request, response);
                 break;
         }
 
@@ -140,7 +146,7 @@ public class FrontControllerServlet extends HttpServlet {
                 signup(request, response);
                 break;
             default:
-                processRequest(request, response, "tendersList");
+                tendersList(request, response);
                 break;
         }
 
