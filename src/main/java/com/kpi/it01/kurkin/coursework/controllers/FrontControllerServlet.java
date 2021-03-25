@@ -1,10 +1,10 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
+import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
@@ -33,13 +33,28 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     private void tendersList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         request.setAttribute("tenders", tenderService.getTenders());
-
         processRequest(request, response, "tendersList");
     }
 
+    private void createNewTender(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        tenderService.createNewTender();
+        tendersList(request, response);
+    }
+
+    private void ownerTenderList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User owner = (User) request.getSession().getAttribute("user");
+
+        if (owner != null) {
+            request.setAttribute("tenders", tenderService.getTenders(owner.getLogin()));
+            processRequest(request, response, "tendersList");
+        } else {
+            tendersList(request, response);
+        }
+    }
+
     private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         try {
 
             request.getSession().setAttribute("user",
@@ -122,6 +137,12 @@ public class FrontControllerServlet extends HttpServlet {
             case "/logout":
                 request.getSession().removeAttribute("user");
                 tendersList(request, response);
+                break;
+            case "/myTenders":
+                ownerTenderList(request, response);
+                break;
+            case "/newTender":
+                createNewTender(request, response);
                 break;
             default:
                 tendersList(request, response);

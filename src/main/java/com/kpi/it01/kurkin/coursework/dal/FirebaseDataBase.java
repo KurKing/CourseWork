@@ -64,16 +64,7 @@ public class FirebaseDataBase implements DataBase {
     }
 
     @Override
-    public void activateTender(String tenderId) {
-        setTenderData(tenderId, "isActive", true);
-    }
-
-    @Override
-    public void disableTender(String tenderId) {
-        setTenderData(tenderId, "isActive", false);
-    }
-
-    private void setTenderData(String tenderId, String name, Object value) {
+    public void setTenderData(String tenderId, String name, Object value) {
         DocumentReference docRef = db.collection("tenders").document(tenderId);
 
         HashMap<String, Object> data = new HashMap<>();
@@ -176,12 +167,20 @@ public class FirebaseDataBase implements DataBase {
 
     @Override
     public void createTender(Tender newTender) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("owner", newTender.getOwner());
+        data.put("about", newTender.getAbout());
+        data.put("name", newTender.getName());
+        data.put("isActive", true);
 
+        db.collection("tenders")
+                .document()
+                .set(data);
     }
 
     @Override
     public void deleteTender(String tenderId) {
-
+        // TODO
     }
 
 }

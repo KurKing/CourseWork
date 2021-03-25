@@ -3,9 +3,15 @@ package com.kpi.it01.kurkin.coursework.models;
 public class TenderOffer {
     private String owner;
     private String text;
-    private Long money;
+    private int money;
 
     public TenderOffer(String owner, String text, Long money) {
+        this.owner = owner;
+        this.text = text;
+        this.money = Math.toIntExact(money);
+    }
+
+    public TenderOffer(String owner, String text, int money) {
         this.owner = owner;
         this.text = text;
         this.money = money;
@@ -19,7 +25,7 @@ public class TenderOffer {
         return text;
     }
 
-    public Long getMoney() {
+    public int getMoney() {
         return money;
     }
 }

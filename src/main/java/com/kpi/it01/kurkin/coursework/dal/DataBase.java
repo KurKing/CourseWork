@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public interface DataBase {
+    // For User
     public User getUserByLogin(String login) throws NotSignUpException;
     public void setUser(User user) throws AlreadySignUpException;
 
+    // For tenders
     public ArrayList<Tender> getTenders(String owner) throws ExecutionException, InterruptedException;
     public ArrayList<Tender> getTenders() throws ExecutionException, InterruptedException;
 
-    public void activateTender(String tenderId);
-    public void disableTender(String tenderId);
+    public void setTenderData(String tenderId, String name, Object value);
 
     public void deleteTender(String tenderId);
-
     public void createTender(Tender newTender);
 
 }

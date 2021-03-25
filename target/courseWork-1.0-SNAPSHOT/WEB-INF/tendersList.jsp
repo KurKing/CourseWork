@@ -34,8 +34,10 @@
             font-size: 24px;
         }
         .name-td{
+            text-align: center;
             border-right: 1px solid black;
             border-top: 1px solid black;
+            font-size: 22px;
             width: 25%;
         }
         .info-td{
@@ -56,9 +58,23 @@
                 <c:choose>
                     <c:when test="${!empty user}">
                         <tr>
-                            <td class="header-user-td">Hello, <c:out value="${user.getName()}"/>!</td>
+                            <td class="header-user-td">
+                                Hello, <c:out value="${user.getName()}"/>!
+                            </td>
                             <td align="right">
-                                <a href="${pageContext.request.contextPath}/tenders/logout"><u>Log out</u></a>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/newTender"><u>Create tender</u></a>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/myTenders"><u>My tenders</u></a>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/logout"><u>Log out</u></a>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </c:when>
@@ -80,16 +96,30 @@
                     </td>
                 </tr>
 
-<c:forEach var="tender" items="${tenders}">
-                <tr>
-                    <td class="name-td">
-                        <b><c:out value="${tender.getName()}"/></b>
-                    </td>
-                    <td class="info-td">
-                        <b><c:out value="${tender.getAbout()}"/></b>
-                    </td>
-                </tr>
-</c:forEach>
+                <c:choose>
+                    <c:when test="${!empty tenders}">
+                        <c:forEach var="tender" items="${tenders}">
+                            <tr>
+                                <td class="name-td">
+                                    <b><c:out value="${tender.getName()}"/></b>
+                                </td>
+                                <td class="info-td">
+                                    <b><c:out value="${tender.getAbout()}"/></b>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <tr>
+                            <td class="name-td">
+                                -
+                            </td>
+                            <td class="info-td">
+                                No tenders yet
+                            </td>
+                        </tr>
+                    </c:otherwise>
+                </c:choose>
 
             </table>
         </div>
