@@ -5,6 +5,7 @@ import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
+import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
 import javax.servlet.*;
@@ -16,13 +17,13 @@ import java.security.NoSuchAlgorithmException;
 @WebServlet(name = "FrontControllerServlet", urlPatterns = {"/tenders/*"})
 public class FrontControllerServlet extends HttpServlet {
 
-    private DataBase db;
     private UserService userService;
+    private TenderService tenderService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        db = (DataBase) config.getServletContext().getAttribute("dataBase");
         userService = (UserService) config.getServletContext().getAttribute("userService");
+        tenderService = (TenderService) config.getServletContext().getAttribute("tenderService");
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response, String jspName)
@@ -116,6 +117,7 @@ public class FrontControllerServlet extends HttpServlet {
                 processRequest(request, response, "tendersList");
                 break;
             default:
+                request.setAttribute("tenders", tenderService.getTenders());
                 processRequest(request, response, "tendersList");
                 break;
         }

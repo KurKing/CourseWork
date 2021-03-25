@@ -2,6 +2,7 @@ package com.kpi.it01.kurkin.coursework.controllers;
 
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.dal.FirebaseDataBase;
+import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
 import javax.servlet.*;
@@ -22,9 +23,10 @@ public class ApplicationServletListener implements ServletContextListener {
         }
 
         UserService userService = new UserService(db);
+        TenderService tenderService = new TenderService(db);
 
-        sce.getServletContext().setAttribute("dataBase", db);
         sce.getServletContext().setAttribute("userService", userService);
+        sce.getServletContext().setAttribute("tenderService", tenderService);
     }
 
     @Override

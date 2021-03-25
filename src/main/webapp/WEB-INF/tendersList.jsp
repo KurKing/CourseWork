@@ -79,14 +79,18 @@
                         <b>Tender Info</b>
                     </td>
                 </tr>
+
+<c:forEach var="tender" items="${tenders}">
                 <tr>
                     <td class="name-td">
-                        <b>Tender name</b>
+                        <b><c:out value="${tender.getName()}"/></b>
                     </td>
                     <td class="info-td">
-                        <b>Tender Info</b>
+                        <b><c:out value="${tender.getAbout()}"/></b>
                     </td>
                 </tr>
+</c:forEach>
+
             </table>
         </div>
     </div>
