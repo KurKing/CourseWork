@@ -68,6 +68,9 @@
                                             <a href="${pageContext.request.contextPath}/tenders/newTender"><u>Create tender</u></a>
                                         </td>
                                         <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/"><u>All tenders</u></a>
+                                        </td>
+                                        <td>
                                             <a href="${pageContext.request.contextPath}/tenders/myTenders"><u>My tenders</u></a>
                                         </td>
                                         <td>
