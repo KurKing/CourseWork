@@ -6,8 +6,8 @@ import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
 import com.kpi.it01.kurkin.coursework.models.User;
-import com.kpi.it01.kurkin.coursework.utils.PasswordHasher;
 
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class UserService {
@@ -17,13 +17,9 @@ public class UserService {
         this.db = db;
     }
 
-    public boolean isLogedIn(String login){
-        return false;
-    }
-
     public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException {
 
-        password = PasswordHasher.getHash(password);
+        password = getHash(password);
         User user = db.getUserByLogin(login);
 
         if (!user.comparePassword(password)) {
@@ -37,10 +33,23 @@ public class UserService {
         if (!password.equals(password2)){
             throw new PasswordMismatchException();
         }
-
         db.setUser(
-                new User(name, login, PasswordHasher.getHash(password))
+                new User(name, login, getHash(password))
         );
+    }
+
+    private String getHash(String passwordToHash) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(passwordToHash.getBytes());
+        byte[] bytes = md.digest();
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i< bytes.length ;i++) {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return sb.toString();
 
     }
 }
