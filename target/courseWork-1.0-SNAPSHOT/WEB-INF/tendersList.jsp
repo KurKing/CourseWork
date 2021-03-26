@@ -105,6 +105,10 @@
                             <tr>
                                 <td class="name-td">
                                     <b><c:out value="${tender.getName()}"/></b>
+                                    <br>
+                                    <a href="${pageContext.request.contextPath}/tenders/tender?tenderId=${tender.getId()}">
+                                        More
+                                    </a>
                                 </td>
                                 <td class="info-td">
                                     <b><c:out value="${tender.getAbout()}"/></b>

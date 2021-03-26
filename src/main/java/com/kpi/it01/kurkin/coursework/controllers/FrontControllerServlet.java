@@ -1,9 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
-import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
-import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
-import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
+import com.kpi.it01.kurkin.coursework.exceptions.*;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
@@ -25,21 +22,12 @@ public class FrontControllerServlet extends HttpServlet {
         userService = (UserService) config.getServletContext().getAttribute("userService");
         tenderService = (TenderService) config.getServletContext().getAttribute("tenderService");
     }
-
-    private void processRequest(HttpServletRequest request, HttpServletResponse response, String jspName)
+    private void forwardToJsp(HttpServletRequest request, HttpServletResponse response, String jspName)
             throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/"+jspName+".jsp");
         dispatcher.forward(request, response);
     }
 
-    private void tendersList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("tenders", tenderService.getTenders());
-        processRequest(request, response, "tendersList");
-    }
-
-    private void newTenderRedirect(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response, "newTender");
-    }
 
     private void newTenderCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name").trim();
@@ -48,21 +36,41 @@ public class FrontControllerServlet extends HttpServlet {
         User user = (User)request.getSession().getAttribute("user");
         if (user == null) {
             login(request, response);
+            return;
         }
 
         tenderService.createNewTender(name, user.getLogin(), about);
 
         tendersList(request, response);
     }
+    private void deleteTender(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO
+    }
 
+    private void tendersList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("tenders", tenderService.getTenders());
+        forwardToJsp(request, response, "tendersList");
+    }
     private void ownerTenderList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User owner = (User) request.getSession().getAttribute("user");
 
         if (owner != null) {
             request.setAttribute("tenders", tenderService.getTenders(owner.getLogin()));
-            processRequest(request, response, "tendersList");
+            forwardToJsp(request, response, "tendersList");
         } else {
             tendersList(request, response);
+        }
+    }
+    private void tenderWithId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String tenderId = request.getParameter("tenderId");
+        try {
+            request.setAttribute("tender",
+                    tenderService.getTenderWithId(tenderId)
+            );
+            request.setAttribute("user", request.getSession().getAttribute("user"));
+            forwardToJsp(request, response, "tender");
+        } catch (NoTenderWithIdException | NullPointerException e) {
+            tendersList(request,response);
         }
     }
 
@@ -72,21 +80,21 @@ public class FrontControllerServlet extends HttpServlet {
 
             request.getSession().setAttribute("user",
                     userService.logIn(
-                            request.getParameter("email"),
-                            request.getParameter("password")
+                            request.getParameter("email").trim(),
+                            request.getParameter("password").trim()
                     )
             );
 
         } catch (IncorrectPasswordException e) {
 
             request.setAttribute("errorMessage", "Incorrect password!");
-            processRequest(request, response,"login");
+            forwardToJsp(request, response,"login");
             return;
 
         } catch (NotSignUpException e) {
 
             request.setAttribute("errorMessage", "You should sign up first!");
-            processRequest(request, response, "signup");
+            forwardToJsp(request, response, "signup");
             return;
 
         } catch (NoSuchAlgorithmException e) {
@@ -98,28 +106,27 @@ public class FrontControllerServlet extends HttpServlet {
 
         tendersList(request, response);
     }
-
     private void signup(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try {
 
             userService.signUp(
-                        request.getParameter("email"),
-                        request.getParameter("name"),
-                        request.getParameter("password"),
-                        request.getParameter("password2")
+                        request.getParameter("email").trim(),
+                        request.getParameter("name").trim(),
+                        request.getParameter("password").trim(),
+                        request.getParameter("password2").trim()
                     );
 
         } catch (AlreadySignUpException e) {
 
             request.setAttribute("errorMessage", "You've already sign up!");
-            processRequest(request, response, "login");
+            forwardToJsp(request, response, "login");
             return;
 
         } catch (PasswordMismatchException e) {
 
             request.setAttribute("errorMessage", "Password mismatch!");
-            processRequest(request, response, "signup");
+            forwardToJsp(request, response, "signup");
             return;
 
         } catch (NoSuchAlgorithmException e) {
@@ -129,8 +136,9 @@ public class FrontControllerServlet extends HttpServlet {
 
         }
 
-        processRequest(request, response, "login");
+        forwardToJsp(request, response, "login");
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -142,10 +150,10 @@ public class FrontControllerServlet extends HttpServlet {
 
         switch (pathInfo) {
             case "/login":
-                processRequest(request, response,"login");
+                forwardToJsp(request, response,"login");
                 break;
             case "/signup":
-                processRequest(request, response, "signup");
+                forwardToJsp(request, response, "signup");
                 break;
             case "/logout":
                 request.getSession().removeAttribute("user");
@@ -155,7 +163,18 @@ public class FrontControllerServlet extends HttpServlet {
                 ownerTenderList(request, response);
                 break;
             case "/newTender":
-                newTenderRedirect(request, response);
+                forwardToJsp(request, response, "newTender");
+                break;
+            case "/tender":
+                tenderWithId(request, response);
+                break;
+            case "/disable":
+                // TODO
+                tenderWithId(request, response);
+                break;
+            case "/activate":
+                // TODO
+                tenderWithId(request, response);
                 break;
             default:
                 tendersList(request, response);
@@ -163,7 +182,6 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
     }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

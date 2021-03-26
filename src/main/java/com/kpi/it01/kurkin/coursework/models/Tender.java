@@ -8,13 +8,15 @@ public class Tender {
     private ArrayList<TenderOffer> offers;
     private String id;
     private String name;
+    private boolean isActive;
 
-    public Tender(String owner, String about, ArrayList<TenderOffer> offers, String id, String name) {
+    public Tender(String owner, String about, ArrayList<TenderOffer> offers, String id, String name, boolean isActive) {
         this.owner = owner;
         this.about = about;
         this.offers = offers;
         this.id = id;
         this.name = name;
+        this.isActive = isActive;
     }
 
     public String getOwner() {
@@ -35,5 +37,13 @@ public class Tender {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public boolean isOwner(String other) {
+        return owner.equals(other);
     }
 }

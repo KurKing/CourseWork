@@ -1,6 +1,7 @@
 package com.kpi.it01.kurkin.coursework.dal;
 
 import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
+import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 import com.kpi.it01.kurkin.coursework.models.User;
@@ -16,6 +17,7 @@ public interface DataBase {
     // For tenders
     public ArrayList<Tender> getTenders(String owner) throws ExecutionException, InterruptedException;
     public ArrayList<Tender> getTenders() throws ExecutionException, InterruptedException;
+    public Tender getTenderWithId(String id) throws NoTenderWithIdException, ExecutionException, InterruptedException;
 
     public void setTenderData(String tenderId, String name, Object value);
 

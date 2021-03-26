@@ -1,9 +1,11 @@
 package com.kpi.it01.kurkin.coursework.services;
 
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
+import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class TenderService {
@@ -33,6 +35,19 @@ public class TenderService {
         return new ArrayList<Tender>();
     }
 
+    public Tender getTenderWithId(String id) throws IllegalArgumentException, NoTenderWithIdException {
+
+        if (id.isEmpty()) { throw new IllegalArgumentException(); }
+
+        try {
+            return db.getTenderWithId(id);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public void disableTender(String tenderId) {
         db.setTenderData(tenderId, "isActive", false);
     }
@@ -41,14 +56,14 @@ public class TenderService {
         db.setTenderData(tenderId, "isActive", true);
     }
 
-    // TODO creating tender
     public void createNewTender(String name, String owner, String about) {
         Tender tender = new Tender(
                 owner,
                 about,
                 null,
                 "",
-                name
+                name,
+                true
         );
         db.createTender(tender);
     }

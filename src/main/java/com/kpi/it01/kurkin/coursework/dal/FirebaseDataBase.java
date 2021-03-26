@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
+import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 import com.kpi.it01.kurkin.coursework.models.TenderOffer;
@@ -114,6 +115,26 @@ public class FirebaseDataBase implements DataBase {
         );
     }
 
+    @Override
+    public Tender getTenderWithId(String id) throws NoTenderWithIdException, ExecutionException, InterruptedException {
+            Map<String, Object> data = db.collection("tenders")
+                    .document(id).get().get().getData();
+
+            if (data == null) { throw new NoTenderWithIdException(); }
+
+            return new Tender(
+                    (String) data.get("owner"),
+                    (String) data.get("about"),
+                    fetchTenderOffersFromDocument(
+                            db.collection("tenders")
+                            .document(id)
+                    ),
+                    id,
+                    (String) data.get("name"),
+                    (boolean) data.get("isActive")
+            );
+    }
+
     private  ArrayList<Tender> fetchTenders(Query query) throws ExecutionException, InterruptedException {
         ArrayList<Tender> tenders = new ArrayList<>();
 
@@ -132,7 +153,8 @@ public class FirebaseDataBase implements DataBase {
                             (String) data.get("about"),
                             offers,
                             tender.getId(),
-                            (String) data.get("name")
+                            (String) data.get("name"),
+                            (boolean) data.get("isActive")
                     )
             );
         }
