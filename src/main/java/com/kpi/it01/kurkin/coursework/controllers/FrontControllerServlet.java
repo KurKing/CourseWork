@@ -37,8 +37,21 @@ public class FrontControllerServlet extends HttpServlet {
         processRequest(request, response, "tendersList");
     }
 
-    private void createNewTender(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        tenderService.createNewTender();
+    private void newTenderRedirect(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        processRequest(request, response, "newTender");
+    }
+
+    private void newTenderCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name").trim();
+        String about = request.getParameter("about").trim();
+
+        User user = (User)request.getSession().getAttribute("user");
+        if (user == null) {
+            login(request, response);
+        }
+
+        tenderService.createNewTender(name, user.getLogin(), about);
+
         tendersList(request, response);
     }
 
@@ -142,7 +155,7 @@ public class FrontControllerServlet extends HttpServlet {
                 ownerTenderList(request, response);
                 break;
             case "/newTender":
-                createNewTender(request, response);
+                newTenderRedirect(request, response);
                 break;
             default:
                 tendersList(request, response);
@@ -165,6 +178,9 @@ public class FrontControllerServlet extends HttpServlet {
                 break;
             case "/signup":
                 signup(request, response);
+                break;
+            case "/createTender":
+                newTenderCreate(request, response);
                 break;
             default:
                 tendersList(request, response);

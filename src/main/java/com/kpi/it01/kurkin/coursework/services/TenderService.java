@@ -42,13 +42,13 @@ public class TenderService {
     }
 
     // TODO creating tender
-    public void createNewTender() {
+    public void createNewTender(String name, String owner, String about) {
         Tender tender = new Tender(
-                "lyosha.kurkin@gmail.com",
-                "Text about this tender",
-                new ArrayList<>(),
-                "id",
-                "Tender name"
+                owner,
+                about,
+                null,
+                "",
+                name
         );
         db.createTender(tender);
     }
