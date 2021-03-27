@@ -81,6 +81,11 @@
                                                     </td>
                                                 </c:otherwise>
                                             </c:choose>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/tenders/deleteTender?tenderId=${tender.getId()}">
+                                                    <u>Delete tender</u>
+                                                </a>
+                                            </td>
                                         </c:if>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/tenders/newOffer?tenderId=${tender.getId()}"><u>Create offer</u></a>
@@ -136,30 +141,40 @@
                     </td>
                 </tr>
 
-<%--     TODO           <c:choose>--%>
-<%--                    <c:when test="${!empty tenders.getOffers()}">--%>
-<%--                        <c:forEach var="tender" items="${tenders}">--%>
-<%--                            <tr>--%>
-<%--                                <td class="name-td">--%>
-<%--                                    <b><c:out value="${tender.getName()}"/></b>--%>
-<%--                                </td>--%>
-<%--                                <td class="info-td">--%>
-<%--                                    <b><c:out value="${tender.getAbout()}"/></b>--%>
-<%--                                </td>--%>
-<%--                            </tr>--%>
-<%--                        </c:forEach>--%>
-<%--                    </c:when>--%>
-<%--                    <c:otherwise>--%>
-<%--                        <tr>--%>
-<%--                            <td class="name-td">--%>
-<%--                                ---%>
-<%--                            </td>--%>
-<%--                            <td class="info-td">--%>
-<%--                                No tenders yet--%>
-<%--                            </td>--%>
-<%--                        </tr>--%>
-<%--                    </c:otherwise>--%>
-<%--                </c:choose>--%>
+                <tr>
+                    <td class="name-td">
+                        <b>Offers</b>
+                    </td>
+
+               <c:choose>
+                    <c:when test="${tender.getOffers().size()!=0}">
+
+                            <td class="info-td">
+                                <table>
+                                    <c:forEach var="offer" items="${tender.getOffers()}">
+                                        <tr>
+                                            <td>
+                                                From: <c:out value="${offer.getOwner()}"/><br>
+                                                Text: <c:out value="${offer.getText()}"/><br>
+                                                Money: <c:out value="${offer.getMoney()}$"/><br>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </table>
+                            </td>
+
+                    </c:when>
+                    <c:otherwise>
+
+                            <td class="info-td">
+                                No offers yet... <a href="${pageContext.request.contextPath}/tenders/newOffer?tenderId=${tender.getId()}"><u>Create new one!</u></a>
+                            </td>
+
+                    </c:otherwise>
+                </c:choose>
+
+                </tr>
+
             </table>
         </div>
     </div>

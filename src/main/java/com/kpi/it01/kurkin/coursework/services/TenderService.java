@@ -1,8 +1,10 @@
 package com.kpi.it01.kurkin.coursework.services;
 
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
+import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
+import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -68,5 +70,20 @@ public class TenderService {
         db.createTender(tender);
     }
 
-    //TODO creating offer
+    public void createNewOffer(String text, String money, String tenderId, String userLogin) throws IllegalArgumentException, NoIdException {
+        text = text.trim();
+        if (text.isEmpty()) {
+            throw new IllegalArgumentException("Text is required");
+        }
+        money = money.trim();
+        if (money.isEmpty()) {
+            throw new IllegalArgumentException("Money is required");
+        }
+        tenderId = tenderId.trim();
+        if (tenderId.isEmpty()) {
+            throw new NoIdException();
+        }
+
+        db.createOffer(new TenderOffer(userLogin, text, money, tenderId));
+    }
 }

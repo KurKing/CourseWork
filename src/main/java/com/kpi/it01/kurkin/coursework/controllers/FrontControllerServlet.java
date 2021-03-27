@@ -1,6 +1,7 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
 import com.kpi.it01.kurkin.coursework.exceptions.*;
+import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
@@ -42,6 +43,36 @@ public class FrontControllerServlet extends HttpServlet {
         tenderService.createNewTender(name, user.getLogin(), about);
 
         tendersList(request, response);
+    }
+    private void newOfferCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = (User)request.getSession().getAttribute("user");
+        if (user == null){
+           forwardToJsp(request, response, "login");
+            return;
+        }
+
+        try {
+
+            tenderService.createNewOffer(
+                    request.getParameter("text"),
+                    request.getParameter("money"),
+                    request.getParameter("tenderId"),
+                    user.getLogin()
+            );
+            tendersList(request, response);
+
+        } catch (IllegalArgumentException e){
+
+            request.setAttribute("message", e.getLocalizedMessage());
+            request.setAttribute("tenderId", request.getParameter("tenderId"));
+            forwardToJsp(request,  response, "newOffer");
+
+        } catch (NoIdException | NullPointerException e) {
+
+            tendersList(request, response);
+
+        }
+
     }
     private void deleteTender(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO
@@ -176,6 +207,18 @@ public class FrontControllerServlet extends HttpServlet {
                 // TODO
                 tenderWithId(request, response);
                 break;
+            case "/newOffer":
+                if (request.getSession().getAttribute("user")!=null){
+                    request.setAttribute("tenderId", request.getParameter("tenderId"));
+                    forwardToJsp(request,  response, "newOffer");
+                } else {
+                    forwardToJsp(request, response,"login");
+                }
+                break;
+            case "/deleteTender":
+                // TODO
+                tenderWithId(request, response);
+                break;
             default:
                 tendersList(request, response);
                 break;
@@ -199,6 +242,9 @@ public class FrontControllerServlet extends HttpServlet {
                 break;
             case "/createTender":
                 newTenderCreate(request, response);
+                break;
+            case "/createOffer":
+                newOfferCreate(request, response);
                 break;
             default:
                 tendersList(request, response);

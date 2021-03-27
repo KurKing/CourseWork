@@ -178,7 +178,8 @@ public class FirebaseDataBase implements DataBase {
                     new TenderOffer(
                             (String) data.get("owner"),
                             (String) data.get("text"),
-                            (Long) data.get("money")
+                            (Long) data.get("money"),
+                            document.getId()
                     )
             );
 
@@ -205,4 +206,17 @@ public class FirebaseDataBase implements DataBase {
         // TODO
     }
 
+    @Override
+    public void createOffer(TenderOffer newOffer) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("owner", newOffer.getOwner());
+        data.put("text", newOffer.getText());
+        data.put("money", newOffer.getMoney());
+
+        db.collection("tenders")
+                .document(newOffer.getTenderId())
+                .collection("offers")
+                .document()
+                .set(data);
+    }
 }

@@ -4,6 +4,7 @@ import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
+import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 import com.kpi.it01.kurkin.coursework.models.User;
 
 import java.util.ArrayList;
@@ -23,5 +24,6 @@ public interface DataBase {
 
     public void deleteTender(String tenderId);
     public void createTender(Tender newTender);
+    public void createOffer(TenderOffer newOffer);
 
 }
