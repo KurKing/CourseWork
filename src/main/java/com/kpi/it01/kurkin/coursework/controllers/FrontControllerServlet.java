@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
 
 @WebServlet(name = "FrontControllerServlet", urlPatterns = {"/tenders/*"})
 public class FrontControllerServlet extends HttpServlet {
@@ -93,7 +94,9 @@ public class FrontControllerServlet extends HttpServlet {
         }
     }
     private void tenderWithId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String tenderId = request.getParameter("tenderId");
+        tenderWithId(request,response,request.getParameter("tenderId"));
+    }
+    private void tenderWithId(HttpServletRequest request, HttpServletResponse response, String tenderId) throws ServletException, IOException {
         try {
             request.setAttribute("tender",
                     tenderService.getTenderWithId(tenderId)
@@ -102,6 +105,26 @@ public class FrontControllerServlet extends HttpServlet {
             forwardToJsp(request, response, "tender");
         } catch (NoTenderWithIdException | NullPointerException e) {
             tendersList(request,response);
+        }
+    }
+
+    private void setTenderStatus(HttpServletRequest request, HttpServletResponse response, Boolean status) throws ServletException, IOException {
+        User user = (User)request.getSession().getAttribute("user");
+        if (user == null){
+            forwardToJsp(request, response, "login");
+            return;
+        }
+
+        String tenderId = request.getParameter("tenderId");
+        if (tenderId.isEmpty()) {
+            tendersList(request, response);
+            return;
+        }
+
+        try {
+            tenderService.setTenderStatus(tenderId, user.getLogin(), status);
+        } catch (Exception e) {
+            tendersList(request, response);
         }
     }
 
@@ -200,12 +223,10 @@ public class FrontControllerServlet extends HttpServlet {
                 tenderWithId(request, response);
                 break;
             case "/disable":
-                // TODO
-                tenderWithId(request, response);
+                setTenderStatus(request,response, false);
                 break;
             case "/activate":
-                // TODO
-                tenderWithId(request, response);
+                setTenderStatus(request,response, true);
                 break;
             case "/newOffer":
                 if (request.getSession().getAttribute("user")!=null){

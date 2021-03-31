@@ -65,13 +65,13 @@ public class FirebaseDataBase implements DataBase {
     }
 
     @Override
-    public void setTenderData(String tenderId, String name, Object value) {
+    public void updateTenderData(String tenderId, String name, Object value) {
         DocumentReference docRef = db.collection("tenders").document(tenderId);
 
         HashMap<String, Object> data = new HashMap<>();
         data.put(name, value);
 
-        docRef.set(data);
+        docRef.update(data);
     }
 
     @Override
@@ -186,6 +186,18 @@ public class FirebaseDataBase implements DataBase {
         }
 
         return offers;
+    }
+
+    @Override
+    public String getTenderOwner(String tenderId) throws NoTenderWithIdException, ExecutionException, InterruptedException {
+        DocumentSnapshot document = db.collection("tenders")
+                .document(tenderId).get().get();
+
+        if (document.exists()) {
+            return (String) document.getData().get("owner");
+        }
+
+        throw new NoTenderWithIdException();
     }
 
     @Override

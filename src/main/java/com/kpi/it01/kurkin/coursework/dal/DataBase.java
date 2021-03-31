@@ -19,8 +19,9 @@ public interface DataBase {
     public ArrayList<Tender> getTenders(String owner) throws ExecutionException, InterruptedException;
     public ArrayList<Tender> getTenders() throws ExecutionException, InterruptedException;
     public Tender getTenderWithId(String id) throws NoTenderWithIdException, ExecutionException, InterruptedException;
+    public String getTenderOwner(String tenderId) throws NoTenderWithIdException, ExecutionException, InterruptedException;
 
-    public void setTenderData(String tenderId, String name, Object value);
+    public void updateTenderData(String tenderId, String name, Object value);
 
     public void deleteTender(String tenderId);
     public void createTender(Tender newTender);

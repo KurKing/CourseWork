@@ -3,11 +3,11 @@ package com.kpi.it01.kurkin.coursework.services;
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
+import com.kpi.it01.kurkin.coursework.exceptions.NotOwnerException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class TenderService {
@@ -50,12 +50,12 @@ public class TenderService {
         return null;
     }
 
-    public void disableTender(String tenderId) {
-        db.setTenderData(tenderId, "isActive", false);
-    }
+    public void setTenderStatus(String tenderId, String owner, Boolean isActive) throws InterruptedException, NoTenderWithIdException, ExecutionException, NotOwnerException {
+        if (owner.equals(db.getTenderOwner(tenderId))){
+            db.updateTenderData(tenderId, "isActive", isActive);
+        }
 
-    public void activateTender(String tenderId) {
-        db.setTenderData(tenderId, "isActive", true);
+        throw new NotOwnerException();
     }
 
     public void createNewTender(String name, String owner, String about) {
