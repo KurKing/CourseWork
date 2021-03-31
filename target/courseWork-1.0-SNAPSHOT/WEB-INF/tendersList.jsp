@@ -65,6 +65,9 @@
                                 <table>
                                     <tr>
                                         <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/search"><u>Search tender</u></a>
+                                        </td>
+                                        <td>
                                             <a href="${pageContext.request.contextPath}/tenders/newTender"><u>Create tender</u></a>
                                         </td>
                                         <td>
@@ -85,7 +88,19 @@
                         <tr>
                             <td></td>
                             <td align="right">
-                                <a href="${pageContext.request.contextPath}/tenders/login"><u>Log in</u></a>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/search"><u>Search tender</u></a>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/tenders/"><u>All tenders</u></a>
+                                        </td>
+                                        <td align="right">
+                                            <a href="${pageContext.request.contextPath}/tenders/login"><u>Log in</u></a>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </c:otherwise>

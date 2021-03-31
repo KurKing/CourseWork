@@ -140,6 +140,23 @@
                         <b><c:out value="${tender.getOwner()}"/></b>
                     </td>
                 </tr>
+                <tr>
+                    <td class="name-td">
+                        <b>Status:</b>
+                    </td>
+                    <td class="info-td">
+                        <b>
+                        <c:choose>
+                            <c:when test="${tender.isActive()}">
+                                Active
+                            </c:when>
+                            <c:otherwise>
+                                Disabled
+                            </c:otherwise>
+                        </c:choose>
+                        </b>
+                    </td>
+                </tr>
 
                 <tr>
                     <td class="name-td">

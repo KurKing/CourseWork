@@ -100,18 +100,27 @@ public class FirebaseDataBase implements DataBase {
     }
 
     @Override
-    public ArrayList<Tender> getTenders(String owner) throws ExecutionException, InterruptedException {
-        return fetchTenders(
-                db.collection("tenders")
-                .whereEqualTo("owner", owner)
-        );
-    }
-
-    @Override
     public ArrayList<Tender> getTenders() throws ExecutionException, InterruptedException {
         return fetchTenders(
                 db.collection("tenders")
                 .whereEqualTo("isActive", true)
+        );
+    }
+
+    @Override
+    public ArrayList<Tender> getTendersWithOwner(String owner) throws ExecutionException, InterruptedException {
+        return fetchTenders(
+                db.collection("tenders")
+                        .whereEqualTo("owner", owner)
+        );
+    }
+
+    @Override
+    public ArrayList<Tender> getTendersByName(String name) throws ExecutionException, InterruptedException {
+        return fetchTenders(
+                db.collection("tenders")
+                        .whereEqualTo("isActive", true)
+                        .whereEqualTo("name", name)
         );
     }
 

@@ -46,4 +46,15 @@ public class Tender {
     public boolean isOwner(String other) {
         return owner.equals(other);
     }
+
+    @Override
+    public String toString() {
+        return "Tender{" +
+                "owner='" + owner + '\'' +
+                ", about='" + about + '\'' +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

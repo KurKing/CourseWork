@@ -1,7 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
 import com.kpi.it01.kurkin.coursework.exceptions.*;
-import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 import com.kpi.it01.kurkin.coursework.services.UserService;
@@ -11,7 +10,6 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ExecutionException;
 
 @WebServlet(name = "FrontControllerServlet", urlPatterns = {"/tenders/*"})
 public class FrontControllerServlet extends HttpServlet {
@@ -83,11 +81,26 @@ public class FrontControllerServlet extends HttpServlet {
         request.setAttribute("tenders", tenderService.getTenders());
         forwardToJsp(request, response, "tendersList");
     }
+    private void tenderListByName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String searchString = request.getParameter("search");
+
+        if (searchString != null){
+            searchString = searchString.trim();
+
+            if (!searchString.isEmpty()){
+                request.setAttribute("tenders", tenderService.getTendersByName(searchString));
+                forwardToJsp(request, response, "tendersList");
+                return;
+            }
+        }
+
+        forwardToJsp(request, response, "tenderSearch");
+    }
     private void ownerTenderList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User owner = (User) request.getSession().getAttribute("user");
 
         if (owner != null) {
-            request.setAttribute("tenders", tenderService.getTenders(owner.getLogin()));
+            request.setAttribute("tenders", tenderService.getTendersWithOwner(owner.getLogin()));
             forwardToJsp(request, response, "tendersList");
         } else {
             tendersList(request, response);
@@ -235,6 +248,9 @@ public class FrontControllerServlet extends HttpServlet {
                 } else {
                     forwardToJsp(request, response,"login");
                 }
+                break;
+            case "/search":
+                tenderListByName(request, response);
                 break;
             case "/deleteTender":
                 // TODO

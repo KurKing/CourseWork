@@ -27,9 +27,19 @@ public class TenderService {
         return new ArrayList<Tender>();
     }
 
-    public ArrayList<Tender> getTenders(String owner) {
+    public ArrayList<Tender> getTendersWithOwner(String owner) {
         try {
-            return db.getTenders(owner);
+            return db.getTendersWithOwner(owner);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<Tender>();
+    }
+
+    public ArrayList<Tender> getTendersByName(String name) {
+        try {
+            return db.getTendersByName(name);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

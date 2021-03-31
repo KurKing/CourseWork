@@ -16,8 +16,9 @@ public interface DataBase {
     public void setUser(User user) throws AlreadySignUpException;
 
     // For tenders
-    public ArrayList<Tender> getTenders(String owner) throws ExecutionException, InterruptedException;
+    public ArrayList<Tender> getTendersWithOwner(String owner) throws ExecutionException, InterruptedException;
     public ArrayList<Tender> getTenders() throws ExecutionException, InterruptedException;
+    public ArrayList<Tender> getTendersByName(String name) throws ExecutionException, InterruptedException;
     public Tender getTenderWithId(String id) throws NoTenderWithIdException, ExecutionException, InterruptedException;
     public String getTenderOwner(String tenderId) throws NoTenderWithIdException, ExecutionException, InterruptedException;
 
