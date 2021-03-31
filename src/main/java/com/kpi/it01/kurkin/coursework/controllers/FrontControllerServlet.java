@@ -74,8 +74,22 @@ public class FrontControllerServlet extends HttpServlet {
 
     }
     private void deleteTender(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO
+        User user = (User)request.getSession().getAttribute("user");
+        if (user == null){
+            forwardToJsp(request, response, "login");
+            return;
+        }
+
+        String tenderId = request.getParameter("tenderId");
+        if (tenderId.isEmpty()) {
+            tendersList(request, response);
+            return;
+        }
+
+        tenderService.deleteTender(tenderId, user.getLogin());
+        tendersList(request, response);
     }
+
 
     private void tendersList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("tenders", tenderService.getTenders());
@@ -253,8 +267,7 @@ public class FrontControllerServlet extends HttpServlet {
                 tenderListByName(request, response);
                 break;
             case "/deleteTender":
-                // TODO
-                tenderWithId(request, response);
+                deleteTender(request, response);
                 break;
             default:
                 tendersList(request, response);

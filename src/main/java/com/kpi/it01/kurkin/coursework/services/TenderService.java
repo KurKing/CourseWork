@@ -63,9 +63,21 @@ public class TenderService {
     public void setTenderStatus(String tenderId, String owner, Boolean isActive) throws InterruptedException, NoTenderWithIdException, ExecutionException, NotOwnerException {
         if (owner.equals(db.getTenderOwner(tenderId))){
             db.updateTenderData(tenderId, "isActive", isActive);
+            return;
         }
 
         throw new NotOwnerException();
+    }
+
+    public void deleteTender(String tenderId, String owner) {
+        try {
+            if (owner.equals(db.getTenderOwner(tenderId))){
+                db.deleteTender(tenderId);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void createNewTender(String name, String owner, String about) {

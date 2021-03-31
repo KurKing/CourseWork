@@ -224,7 +224,28 @@ public class FirebaseDataBase implements DataBase {
 
     @Override
     public void deleteTender(String tenderId) {
-        // TODO
+
+        List<QueryDocumentSnapshot> offersFromQuery = null;
+        try {
+            offersFromQuery = db.collection("tenders").document(tenderId)
+                    .collection("offers")
+                    .orderBy("money")
+                    .get().get()
+                    .getDocuments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        for (QueryDocumentSnapshot tenderOfferDocument : offersFromQuery) {
+
+           tenderOfferDocument.getReference()
+                   .set(new HashMap<String, Object>());
+
+        }
+
+        db.collection("tenders").document(tenderId)
+                .delete();
     }
 
     @Override
