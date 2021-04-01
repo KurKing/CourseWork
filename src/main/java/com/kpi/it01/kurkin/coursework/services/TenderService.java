@@ -10,7 +10,7 @@ import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class TenderService {
+public class TenderService extends Service {
     private DataBase db;
 
     public TenderService(DataBase db) {
@@ -60,7 +60,9 @@ public class TenderService {
         return null;
     }
 
-    public void setTenderStatus(String tenderId, String owner, Boolean isActive) throws InterruptedException, NoTenderWithIdException, ExecutionException, NotOwnerException {
+    public void setTenderStatus(String tenderId, String owner, Boolean isActive) throws InterruptedException, NoTenderWithIdException, ExecutionException, NotOwnerException, IllegalArgumentException {
+        if (tenderId.isEmpty()) { throw new IllegalArgumentException(); }
+
         if (owner.equals(db.getTenderOwner(tenderId))){
             db.updateTenderData(tenderId, "isActive", isActive);
             return;
@@ -80,7 +82,10 @@ public class TenderService {
         }
     }
 
-    public void createNewTender(String name, String owner, String about) {
+    public void createNewTender(String name, String owner, String about) throws IllegalArgumentException {
+        name = getValidatedString(name, "Name");
+        about = getValidatedString(about, "About");
+
         Tender tender = new Tender(
                 owner,
                 about,
@@ -93,13 +98,12 @@ public class TenderService {
     }
 
     public void createNewOffer(String text, String money, String tenderId, String userLogin) throws IllegalArgumentException, NoIdException {
-        text = text.trim();
-        if (text.isEmpty()) {
-            throw new IllegalArgumentException("Text is required");
-        }
-        money = money.trim();
-        if (money.isEmpty()) {
-            throw new IllegalArgumentException("Money is required");
+        text = getValidatedString(text, "Text");
+        money = getValidatedString(money, "Money");
+        Integer.parseInt(money);
+
+        if (tenderId == null) {
+            throw new NoIdException();
         }
         tenderId = tenderId.trim();
         if (tenderId.isEmpty()) {

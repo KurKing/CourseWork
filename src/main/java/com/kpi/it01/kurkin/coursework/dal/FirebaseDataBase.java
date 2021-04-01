@@ -50,7 +50,7 @@ public class FirebaseDataBase implements DataBase {
 
         try {
             if (docRef.get().get().exists()) {
-                throw new AlreadySignUpException();
+                throw new AlreadySignUpException("You've already sign up!");
             }
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getLocalizedMessage());
@@ -96,7 +96,7 @@ public class FirebaseDataBase implements DataBase {
             );
         }
 
-        throw new NotSignUpException();
+        throw new NotSignUpException("You should sign up first!");
     }
 
     @Override
@@ -240,7 +240,7 @@ public class FirebaseDataBase implements DataBase {
         for (QueryDocumentSnapshot tenderOfferDocument : offersFromQuery) {
 
            tenderOfferDocument.getReference()
-                   .set(new HashMap<String, Object>());
+                   .delete();
 
         }
 

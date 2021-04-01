@@ -39,14 +39,25 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        tenderService.createNewTender(name, user.getLogin(), about);
+        try {
+
+            tenderService.createNewTender(name, user.getLogin(), about);
+
+        } catch (IllegalArgumentException e) {
+
+            request.setAttribute("message", e.getLocalizedMessage());
+            forwardToJsp(request,  response, "newTender");
+            return;
+
+        }
 
         tendersList(request, response);
     }
     private void newOfferCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User)request.getSession().getAttribute("user");
         if (user == null){
-           forwardToJsp(request, response, "login");
+            request.setAttribute("message", null);
+            forwardToJsp(request, response, "login");
             return;
         }
 
@@ -142,14 +153,10 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        String tenderId = request.getParameter("tenderId");
-        if (tenderId.isEmpty()) {
-            tendersList(request, response);
-            return;
-        }
-
         try {
-            tenderService.setTenderStatus(tenderId, user.getLogin(), status);
+            String tenderId = request.getParameter("tenderId");
+            tenderService.setTenderStatus(request.getParameter("tenderId"), user.getLogin(), status);
+            tenderWithId(request, response, tenderId);
         } catch (Exception e) {
             tendersList(request, response);
         }
@@ -166,21 +173,27 @@ public class FrontControllerServlet extends HttpServlet {
                     )
             );
 
-        } catch (IncorrectPasswordException e) {
+        } catch (IncorrectPasswordException | IllegalArgumentException e) {
 
-            request.setAttribute("errorMessage", "Incorrect password!");
+            request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request, response,"login");
             return;
 
-        } catch (NotSignUpException e) {
+        } catch (NullPointerException e) {
 
-            request.setAttribute("errorMessage", "You should sign up first!");
-            forwardToJsp(request, response, "signup");
+            request.setAttribute("errorMessage", "Empty fields!");
+            forwardToJsp(request, response, "login");
             return;
 
         } catch (NoSuchAlgorithmException e) {
 
             request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
+            return;
+
+        } catch (NotSignUpException e) {
+
+            request.setAttribute("errorMessage", e.getLocalizedMessage());
+            forwardToJsp(request, response,"signup");
             return;
 
         }
@@ -192,21 +205,15 @@ public class FrontControllerServlet extends HttpServlet {
         try {
 
             userService.signUp(
-                        request.getParameter("email").trim(),
-                        request.getParameter("name").trim(),
-                        request.getParameter("password").trim(),
-                        request.getParameter("password2").trim()
+                        request.getParameter("email"),
+                        request.getParameter("name"),
+                        request.getParameter("password"),
+                        request.getParameter("password2")
                     );
 
-        } catch (AlreadySignUpException e) {
+        }  catch (PasswordMismatchException | NullPointerException | IllegalArgumentException | AlreadySignUpException e) {
 
-            request.setAttribute("errorMessage", "You've already sign up!");
-            forwardToJsp(request, response, "login");
-            return;
-
-        } catch (PasswordMismatchException e) {
-
-            request.setAttribute("errorMessage", "Password mismatch!");
+            request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request, response, "signup");
             return;
 

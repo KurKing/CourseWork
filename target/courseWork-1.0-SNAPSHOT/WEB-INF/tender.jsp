@@ -51,6 +51,13 @@
 
 </head>
 <body>
+
+<c:if test="${errorMessage != null}">
+    <script>
+        alert("${errorMessage}")
+    </script>
+</c:if>
+
 <div class="bg-contact2" style="background-image: url('../images/bg-02.jpg');">
     <div class="container-contact2">
         <div class="wrap-contact3">

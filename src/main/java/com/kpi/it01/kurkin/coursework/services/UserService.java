@@ -10,29 +10,38 @@ import com.kpi.it01.kurkin.coursework.models.User;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class UserService {
+public class UserService extends Service {
     private DataBase db;
 
     public UserService(DataBase db) {
         this.db = db;
     }
 
-    public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException {
+    public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException, NullPointerException, IllegalArgumentException {
+
+        login = getValidatedString(login, "Login");
+        password = getValidatedString(password, "Password");
 
         password = getHash(password);
         User user = db.getUserByLogin(login);
 
         if (!user.comparePassword(password)) {
-            throw new IncorrectPasswordException();
+            throw new IncorrectPasswordException("Incorrect password!");
         }
 
         return user;
     }
 
-    public void signUp(String login, String name, String password, String password2) throws PasswordMismatchException, AlreadySignUpException, NoSuchAlgorithmException {
+    public void signUp(String login, String name, String password, String password2) throws PasswordMismatchException, AlreadySignUpException, NoSuchAlgorithmException, IllegalArgumentException, NullPointerException {
+        login = getValidatedString(login, "Login");
+        name = getValidatedString(name, "Name");
+        password = getValidatedString(password, "Password");
+        password2 = getValidatedString(password2, "Retyped password");
+
         if (!password.equals(password2)){
-            throw new PasswordMismatchException();
+            throw new PasswordMismatchException("Password mismatch!");
         }
+
         db.setUser(
                 new User(name, login, getHash(password))
         );
