@@ -75,14 +75,14 @@
                                             <c:choose>
                                                 <c:when test="${tender.isActive()}">
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/tenders/disable?tenderId=${tender.getId()}">
+                                                        <a href="${pageContext.request.contextPath}/tenders/setStatus?tenderId=${tender.getId()}&status=0">
                                                             <u>Disable tender</u>
                                                         </a>
                                                     </td>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/tenders/activate?tenderId=${tender.getId()}">
+                                                        <a href="${pageContext.request.contextPath}/tenders/setStatus?tenderId=${tender.getId()}&status=1">
                                                             <u>Activate tender</u>
                                                         </a>
                                                     </td>

@@ -20,10 +20,10 @@ public class UserService extends Service {
     public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException, NullPointerException, IllegalArgumentException {
 
         login = getValidatedString(login, "Login");
-        password = getValidatedString(password, "Password");
-
-        password = getHash(password);
         User user = db.getUserByLogin(login);
+
+        password = getValidatedString(password, "Password");
+        password = getHash(password);
 
         if (!user.comparePassword(password)) {
             throw new IncorrectPasswordException("Incorrect password!");

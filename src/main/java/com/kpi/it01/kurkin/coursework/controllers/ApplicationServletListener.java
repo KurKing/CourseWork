@@ -1,5 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
+import com.kpi.it01.kurkin.coursework.controllers.factories.ProcessRequestStrategiesFactory;
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.dal.FirebaseDataBase;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -15,20 +16,18 @@ public class ApplicationServletListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
 
-        DataBase db = null;
         try {
-            db = new FirebaseDataBase(sce.getServletContext().getRealPath("/WEB-INF/firebasekey.json"));
+            DataBase db = new FirebaseDataBase(sce.getServletContext().getRealPath("/WEB-INF/firebasekey.json"));
+
+            ProcessRequestStrategiesFactory factory = new ProcessRequestStrategiesFactory(
+                    new UserService(db),
+                    new TenderService(db)
+            );
+
+            sce.getServletContext().setAttribute("factory", factory);
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println(e.getLocalizedMessage());
         }
 
-        UserService userService = new UserService(db);
-        TenderService tenderService = new TenderService(db);
-
-        sce.getServletContext().setAttribute("userService", userService);
-        sce.getServletContext().setAttribute("tenderService", tenderService);
     }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {}
 }

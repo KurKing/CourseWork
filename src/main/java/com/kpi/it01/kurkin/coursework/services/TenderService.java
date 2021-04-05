@@ -100,7 +100,12 @@ public class TenderService extends Service {
     public void createNewOffer(String text, String money, String tenderId, String userLogin) throws IllegalArgumentException, NoIdException {
         text = getValidatedString(text, "Text");
         money = getValidatedString(money, "Money");
-        Integer.parseInt(money);
+
+        try {
+            Integer.parseInt(money);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Enter number in 'MONEY' field!");
+        }
 
         if (tenderId == null) {
             throw new NoIdException();
