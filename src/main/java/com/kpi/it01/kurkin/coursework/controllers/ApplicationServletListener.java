@@ -1,6 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.controllers.factories.ProcessRequestStrategiesFactory;
+import com.kpi.it01.kurkin.coursework.controllers.factories.ProcessRequestDecoratorFactory;
 import com.kpi.it01.kurkin.coursework.dal.DataBase;
 import com.kpi.it01.kurkin.coursework.dal.FirebaseDataBase;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -19,7 +19,7 @@ public class ApplicationServletListener implements ServletContextListener {
         try {
             DataBase db = new FirebaseDataBase(sce.getServletContext().getRealPath("/WEB-INF/firebasekey.json"));
 
-            ProcessRequestStrategiesFactory factory = new ProcessRequestStrategiesFactory(
+            ProcessRequestDecoratorFactory factory = new ProcessRequestDecoratorFactory(
                     new UserService(db),
                     new TenderService(db)
             );

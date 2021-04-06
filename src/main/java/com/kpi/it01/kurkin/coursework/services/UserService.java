@@ -17,22 +17,25 @@ public class UserService extends Service {
         this.db = db;
     }
 
-    public User logIn(String login, String password) throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException, NullPointerException, IllegalArgumentException {
-
+    public User logIn(String login, String password)
+            throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException,
+            NullPointerException, IllegalArgumentException {
         login = getValidatedString(login, "Login");
         User user = db.getUserByLogin(login);
 
         password = getValidatedString(password, "Password");
         password = getHash(password);
 
-        if (!user.comparePassword(password)) {
+        if (!user.getPasswordHash().equals(password)) {
             throw new IncorrectPasswordException("Incorrect password!");
         }
 
         return user;
     }
 
-    public void signUp(String login, String name, String password, String password2) throws PasswordMismatchException, AlreadySignUpException, NoSuchAlgorithmException, IllegalArgumentException, NullPointerException {
+    public void signUp(String login, String name, String password, String password2)
+            throws PasswordMismatchException, AlreadySignUpException, NoSuchAlgorithmException,
+            IllegalArgumentException, NullPointerException {
         login = getValidatedString(login, "Login");
         name = getValidatedString(name, "Name");
         password = getValidatedString(password, "Password");
@@ -48,7 +51,6 @@ public class UserService extends Service {
     }
 
     private String getHash(String passwordToHash) throws NoSuchAlgorithmException {
-
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(passwordToHash.getBytes());
         byte[] bytes = md.digest();
@@ -59,7 +61,6 @@ public class UserService extends Service {
         }
 
         return sb.toString();
-
     }
 }
 

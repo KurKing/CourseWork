@@ -1,6 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers;
 
-import com.kpi.it01.kurkin.coursework.controllers.factories.ProcessRequestStrategiesFactory;
+import com.kpi.it01.kurkin.coursework.controllers.factories.ProcessRequestDecoratorFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -10,11 +10,11 @@ import java.io.IOException;
 @WebServlet(name = "FrontControllerServlet", urlPatterns = {"/tenders/*"})
 public class FrontControllerServlet extends HttpServlet {
 
-    private ProcessRequestStrategiesFactory factory;
+    private ProcessRequestDecoratorFactory factory;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        factory = (ProcessRequestStrategiesFactory) config.getServletContext().getAttribute("factory");
+        factory = (ProcessRequestDecoratorFactory) config.getServletContext().getAttribute("factory");
     }
 
     private String getPathFromRequest(HttpServletRequest request) {
@@ -25,15 +25,13 @@ public class FrontControllerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        factory.getStrategyForPath(getPathFromRequest(request))
+        factory.getDecoratorForPath(getPathFromRequest(request))
                 .executeGet(request, response);
 
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        factory.getStrategyForPath(getPathFromRequest(request))
+        factory.getDecoratorForPath(getPathFromRequest(request))
                 .executePost(request, response);
 
     }

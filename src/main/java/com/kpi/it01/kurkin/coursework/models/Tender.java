@@ -43,18 +43,29 @@ public class Tender {
         return isActive;
     }
 
-    public boolean isOwner(String other) {
-        return owner.equals(other);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tender)) return false;
+
+        Tender tender = (Tender) o;
+
+        if (isActive() != tender.isActive()) return false;
+        if (!getOwner().equals(tender.getOwner())) return false;
+        if (!getAbout().equals(tender.getAbout())) return false;
+        if (!getOffers().equals(tender.getOffers())) return false;
+        if (!getId().equals(tender.getId())) return false;
+        return getName().equals(tender.getName());
     }
 
     @Override
-    public String toString() {
-        return "Tender{" +
-                "owner='" + owner + '\'' +
-                ", about='" + about + '\'' +
-                ", id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", isActive=" + isActive +
-                '}';
+    public int hashCode() {
+        int result = getOwner().hashCode();
+        result = 31 * result + getAbout().hashCode();
+        result = 31 * result + getOffers().hashCode();
+        result = 31 * result + getId().hashCode();
+        result = 31 * result + getName().hashCode();
+        result = 31 * result + (isActive() ? 1 : 0);
+        return result;
     }
 }

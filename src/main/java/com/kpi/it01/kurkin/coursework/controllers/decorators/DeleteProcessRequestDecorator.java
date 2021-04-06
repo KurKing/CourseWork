@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.controllers.strategies;
+package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class DeleteProcessRequestStrategy extends ProcessRequestStrategy {
+public class DeleteProcessRequestDecorator extends ProcessRequestDecorator {
 
     private TenderService tenderService;
 
-    public DeleteProcessRequestStrategy(TenderService tenderService) {
+    public DeleteProcessRequestDecorator(TenderService tenderService) {
         this.tenderService = tenderService;
     }
 

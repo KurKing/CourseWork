@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.controllers.strategies;
+package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -8,16 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class SetStatusProcessRequestStrategy extends ProcessRequestStrategy {
+public class SetStatusProcessRequestDecorator extends ProcessRequestDecorator {
 
     TenderService tenderService;
-
-    public SetStatusProcessRequestStrategy(TenderService tenderService) {
+    public SetStatusProcessRequestDecorator(TenderService tenderService) {
         this.tenderService = tenderService;
     }
 
     @Override
-    public void executeGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executeGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         User user = (User)request.getSession().getAttribute("user");
         if (user == null){
             forwardToJsp(request, response, "login");

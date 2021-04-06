@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.controllers.strategies;
+package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-public class LoginProcessRequestStrategy extends ProcessRequestStrategy {
+public class LoginProcessRequestDecorator extends ProcessRequestDecorator {
 
     private UserService userService;
 
-    public LoginProcessRequestStrategy(UserService userService) {
+    public LoginProcessRequestDecorator(UserService userService) {
         this.userService = userService;
     }
 

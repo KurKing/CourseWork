@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.controllers.strategies;
+package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
 import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.models.User;
@@ -9,16 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class OfferCreateProcessRequestStrategy extends ProcessRequestStrategy {
+public class OfferCreateProcessRequestDecorator extends ProcessRequestDecorator {
 
     private TenderService tenderService;
 
-    public OfferCreateProcessRequestStrategy(TenderService tenderService) {
+    public OfferCreateProcessRequestDecorator(TenderService tenderService) {
         this.tenderService = tenderService;
     }
 
     @Override
-    public void executePost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executePost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         User user = (User)request.getSession().getAttribute("user");
         if (user == null){
@@ -28,9 +29,7 @@ public class OfferCreateProcessRequestStrategy extends ProcessRequestStrategy {
         }
 
         try {
-
             String tenderId = request.getParameter("tenderId");
-
             tenderService.createNewOffer(
                     request.getParameter("text"),
                     request.getParameter("money"),
@@ -38,13 +37,10 @@ public class OfferCreateProcessRequestStrategy extends ProcessRequestStrategy {
                     user.getLogin()
             );
             response.sendRedirect(request.getContextPath()+"/tenders/tender?tenderId="+tenderId);
-
         } catch (IllegalArgumentException e){
-
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             request.setAttribute("tenderId", request.getParameter("tenderId"));
             forwardToJsp(request,  response, "newOffer");
-
         } catch (NoIdException | NullPointerException e) {
             response.sendRedirect(request.getContextPath()+"/tenders/");
         }
@@ -52,7 +48,8 @@ public class OfferCreateProcessRequestStrategy extends ProcessRequestStrategy {
     }
 
     @Override
-    public void executeGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executeGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         if (request.getSession().getAttribute("user")!=null){
             request.setAttribute("tenderId", request.getParameter("tenderId"));
             forwardToJsp(request, response, "newOffer");

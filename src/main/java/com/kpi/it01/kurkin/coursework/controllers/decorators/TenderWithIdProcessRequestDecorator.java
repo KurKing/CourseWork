@@ -1,4 +1,4 @@
-package com.kpi.it01.kurkin.coursework.controllers.strategies;
+package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
 import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -8,16 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class TenderWithIdProcessRequestStrategy extends ProcessRequestStrategy {
+public class TenderWithIdProcessRequestDecorator extends ProcessRequestDecorator {
 
     private TenderService tenderService;
-
-    public TenderWithIdProcessRequestStrategy(TenderService tenderService) {
+    public TenderWithIdProcessRequestDecorator(TenderService tenderService) {
         this.tenderService = tenderService;
     }
 
     @Override
-    public void executeGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executeGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             request.setAttribute("tender",
                     tenderService.getTenderWithId(request.getParameter("tenderId"))

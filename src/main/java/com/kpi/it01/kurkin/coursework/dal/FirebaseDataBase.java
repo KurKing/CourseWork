@@ -8,9 +8,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
-import com.kpi.it01.kurkin.coursework.models.Tender;
-import com.kpi.it01.kurkin.coursework.models.TenderOffer;
-import com.kpi.it01.kurkin.coursework.models.User;
+import com.kpi.it01.kurkin.coursework.models.*;
 import org.apache.log4j.BasicConfigurator;
 
 import java.io.FileInputStream;
@@ -26,21 +24,16 @@ public class FirebaseDataBase implements DataBase {
     private Firestore db;
 
     public FirebaseDataBase(String path) throws IOException {
-
             BasicConfigurator.configure();
-
             try {
-
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(new FileInputStream(path)))
                         .build();
                 FirebaseApp.initializeApp(options);
                 db = FirestoreClient.getFirestore();
-
             } catch (IOException e) {
                 System.out.println(e.getLocalizedMessage());
             }
-
     }
 
     @Override
@@ -146,15 +139,11 @@ public class FirebaseDataBase implements DataBase {
 
     private  ArrayList<Tender> fetchTenders(Query query) throws ExecutionException, InterruptedException {
         ArrayList<Tender> tenders = new ArrayList<>();
-
         List<QueryDocumentSnapshot> tendersFromQuery = query
                 .get().get()
                 .getDocuments();
-
         for (QueryDocumentSnapshot tender : tendersFromQuery) {
-
             ArrayList<TenderOffer> offers = fetchTenderOffersFromDocument(tender.getReference());
-
             Map<String, Object> data = tender.getData();
             tenders.add(
                     new Tender(
@@ -167,21 +156,18 @@ public class FirebaseDataBase implements DataBase {
                     )
             );
         }
-
         return tenders;
     }
 
-    private ArrayList<TenderOffer> fetchTenderOffersFromDocument(DocumentReference document) throws ExecutionException, InterruptedException {
+    private ArrayList<TenderOffer> fetchTenderOffersFromDocument(DocumentReference document)
+            throws ExecutionException, InterruptedException {
         ArrayList<TenderOffer> offers = new ArrayList<>();
-
         List<QueryDocumentSnapshot> offersFromQuery = document
                 .collection("offers")
                 .orderBy("money")
                 .get().get()
                 .getDocuments();
-
         for (QueryDocumentSnapshot tenderOfferDocument : offersFromQuery) {
-
             Map<String, Object> data = tenderOfferDocument.getData();
             offers.add(
                     new TenderOffer(
@@ -191,21 +177,18 @@ public class FirebaseDataBase implements DataBase {
                             document.getId()
                     )
             );
-
         }
-
         return offers;
     }
 
     @Override
-    public String getTenderOwner(String tenderId) throws NoTenderWithIdException, ExecutionException, InterruptedException {
+    public String getTenderOwner(String tenderId)
+            throws NoTenderWithIdException, ExecutionException, InterruptedException {
         DocumentSnapshot document = db.collection("tenders")
                 .document(tenderId).get().get();
-
         if (document.exists()) {
             return (String) document.getData().get("owner");
         }
-
         throw new NoTenderWithIdException();
     }
 
@@ -224,8 +207,7 @@ public class FirebaseDataBase implements DataBase {
 
     @Override
     public void deleteTender(String tenderId) {
-
-        List<QueryDocumentSnapshot> offersFromQuery = null;
+        List<QueryDocumentSnapshot> offersFromQuery;
         try {
             offersFromQuery = db.collection("tenders").document(tenderId)
                     .collection("offers")
@@ -236,14 +218,10 @@ public class FirebaseDataBase implements DataBase {
             e.printStackTrace();
             return;
         }
-
         for (QueryDocumentSnapshot tenderOfferDocument : offersFromQuery) {
-
            tenderOfferDocument.getReference()
                    .delete();
-
         }
-
         db.collection("tenders").document(tenderId)
                 .delete();
     }

@@ -42,4 +42,26 @@ public class TenderOffer {
     public int getMoney() {
         return money;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TenderOffer)) return false;
+
+        TenderOffer offer = (TenderOffer) o;
+
+        if (getMoney() != offer.getMoney()) return false;
+        if (!getOwner().equals(offer.getOwner())) return false;
+        if (!getText().equals(offer.getText())) return false;
+        return getTenderId().equals(offer.getTenderId());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getOwner().hashCode();
+        result = 31 * result + getText().hashCode();
+        result = 31 * result + getMoney();
+        result = 31 * result + getTenderId().hashCode();
+        return result;
+    }
 }

@@ -23,16 +23,23 @@ public class User {
         return login;
     }
 
-    public boolean comparePassword(String passwordHash) {
-        return  passwordHash.equals(this.passwordHash);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (!getName().equals(user.getName())) return false;
+        if (!getLogin().equals(user.getLogin())) return false;
+        return getPasswordHash().equals(user.getPasswordHash());
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", login='" + login + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                '}';
+    public int hashCode() {
+        int result = getName().hashCode();
+        result = 31 * result + getLogin().hashCode();
+        result = 31 * result + getPasswordHash().hashCode();
+        return result;
     }
 }
