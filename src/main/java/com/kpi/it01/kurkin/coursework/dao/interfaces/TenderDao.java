@@ -5,10 +5,9 @@ import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public interface TenderDao {
-    Tender get(String id) throws ExecutionException, DataBaseErrorException;
+    Tender get(String id) throws DataBaseErrorException, NoIdException;
     String getTenderOwner(String tenderId) throws NoIdException, DataBaseErrorException;
 
     List<Tender> getAll() throws DataBaseErrorException;

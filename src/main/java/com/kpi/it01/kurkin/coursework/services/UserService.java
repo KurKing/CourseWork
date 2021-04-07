@@ -1,27 +1,27 @@
 package com.kpi.it01.kurkin.coursework.services;
 
-import com.kpi.it01.kurkin.coursework.dal.DataBase;
-import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
-import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
-import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
-import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
+import com.kpi.it01.kurkin.coursework.dao.interfaces.DaoFactory;
+import com.kpi.it01.kurkin.coursework.exceptions.*;
 import com.kpi.it01.kurkin.coursework.models.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class UserService extends Service {
-    private DataBase db;
+import static com.kpi.it01.kurkin.coursework.utils.Validator.getValidatedString;
 
-    public UserService(DataBase db) {
-        this.db = db;
+public class UserService {
+    private DaoFactory daoFactory;
+
+    public UserService(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     public User logIn(String login, String password)
-            throws IncorrectPasswordException, NotSignUpException, NoSuchAlgorithmException,
-            NullPointerException, IllegalArgumentException {
+            throws IncorrectPasswordException, NoIdException, NoSuchAlgorithmException,
+            NullPointerException, IllegalArgumentException, DataBaseErrorException {
+
         login = getValidatedString(login, "Login");
-        User user = db.getUserByLogin(login);
+        User user = daoFactory.getUserDao().get(login);
 
         password = getValidatedString(password, "Password");
         password = getHash(password);
@@ -34,8 +34,8 @@ public class UserService extends Service {
     }
 
     public void signUp(String login, String name, String password, String password2)
-            throws PasswordMismatchException, AlreadySignUpException, NoSuchAlgorithmException,
-            IllegalArgumentException, NullPointerException {
+            throws PasswordMismatchException, NoSuchAlgorithmException,
+            IllegalArgumentException, NullPointerException, AlreadyExistsException, DataBaseErrorException {
         login = getValidatedString(login, "Login");
         name = getValidatedString(name, "Name");
         password = getValidatedString(password, "Password");
@@ -45,7 +45,7 @@ public class UserService extends Service {
             throw new PasswordMismatchException("Password mismatch!");
         }
 
-        db.setUser(
+        daoFactory.getUserDao().create(
                 new User(name, login, getHash(password))
         );
     }

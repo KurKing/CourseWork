@@ -1,15 +1,14 @@
 package com.kpi.it01.kurkin.coursework.dao.firebase;
 
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.*;
 import com.kpi.it01.kurkin.coursework.dao.interfaces.TenderDao;
 import com.kpi.it01.kurkin.coursework.dao.interfaces.TenderOfferDao;
 import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
+import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,24 @@ public class TenderFirebaseDao implements TenderDao {
     }
 
     @Override
-    public Tender get(String id) throws ExecutionException, DataBaseErrorException {
-        return null;
+    public Tender get(String id) throws DataBaseErrorException, NoIdException {
+        try {
+            Map<String, Object> data = db.collection("tenders")
+                    .document(id).get().get().getData();
+
+            if (data == null) { throw new NoIdException(); }
+
+            return new Tender(
+                    (String) data.get("owner"),
+                    (String) data.get("about"),
+                    tenderOfferDao.getAllFromTenderWithId(id),
+                    id,
+                    (String) data.get("name"),
+                    (boolean) data.get("isActive")
+            );
+        } catch (InterruptedException | ExecutionException e) {
+            throw new DataBaseErrorException();
+        }
     }
 
     @Override
@@ -46,17 +61,53 @@ public class TenderFirebaseDao implements TenderDao {
 
     @Override
     public List<Tender> getAll() throws DataBaseErrorException {
-        return null;
+        return fetchTenders(
+                db.collection("tenders")
+                        .whereEqualTo("isActive", true)
+        );
     }
 
     @Override
     public List<Tender> getAllWithName(String name) throws DataBaseErrorException {
-        return null;
+        return fetchTenders(
+                db.collection("tenders")
+                        .whereEqualTo("isActive", true)
+                        .whereEqualTo("name", name)
+        );
     }
 
     @Override
     public List<Tender> getAllWithOwner(String owner) throws DataBaseErrorException {
-        return null;
+        return fetchTenders(
+                db.collection("tenders")
+                        .whereEqualTo("owner", owner)
+        );
+    }
+
+    private List<Tender> fetchTenders(Query query) throws DataBaseErrorException {
+        try {
+            List<Tender> tenders = new ArrayList<>();
+            List<QueryDocumentSnapshot> tendersFromQuery = query
+                    .get().get()
+                    .getDocuments();
+            for (QueryDocumentSnapshot tender : tendersFromQuery) {
+                List<TenderOffer> offers = tenderOfferDao.getAllFromTenderWithId(tender.getId());
+                Map<String, Object> data = tender.getData();
+                tenders.add(
+                        new Tender(
+                                (String) data.get("owner"),
+                                (String) data.get("about"),
+                                offers,
+                                tender.getId(),
+                                (String) data.get("name"),
+                                (boolean) data.get("isActive")
+                        )
+                );
+            }
+            return tenders;
+        } catch (InterruptedException | NoIdException | ExecutionException e) {
+            throw new DataBaseErrorException();
+        }
     }
 
     @Override

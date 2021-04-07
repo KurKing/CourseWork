@@ -1,6 +1,7 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
-import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
+import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 
 import javax.servlet.ServletException;
@@ -24,8 +25,11 @@ public class TenderWithIdProcessRequestDecorator extends ProcessRequestDecorator
             );
             request.setAttribute("user", request.getSession().getAttribute("user"));
             forwardToJsp(request, response, "tender");
-        } catch (NoTenderWithIdException | NullPointerException e) {
+        } catch (NoIdException | NullPointerException e) {
             response.sendRedirect(request.getContextPath()+"/tenders/");
+        } catch (DataBaseErrorException e) {
+            request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
+            return;
         }
     }
 }

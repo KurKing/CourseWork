@@ -1,5 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
@@ -41,7 +42,7 @@ public class OfferCreateProcessRequestDecorator extends ProcessRequestDecorator 
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             request.setAttribute("tenderId", request.getParameter("tenderId"));
             forwardToJsp(request,  response, "newOffer");
-        } catch (NoIdException | NullPointerException e) {
+        } catch (NoIdException | NullPointerException | DataBaseErrorException e) {
             response.sendRedirect(request.getContextPath()+"/tenders/");
         }
 

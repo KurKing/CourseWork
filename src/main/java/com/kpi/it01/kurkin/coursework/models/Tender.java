@@ -1,16 +1,16 @@
 package com.kpi.it01.kurkin.coursework.models;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Tender {
     private String owner;
     private String about;
-    private ArrayList<TenderOffer> offers;
+    private List<TenderOffer> offers;
     private String id;
     private String name;
     private boolean isActive;
 
-    public Tender(String owner, String about, ArrayList<TenderOffer> offers, String id, String name, boolean isActive) {
+    public Tender(String owner, String about, List<TenderOffer> offers, String id, String name, boolean isActive) {
         this.owner = owner;
         this.about = about;
         this.offers = offers;
@@ -27,7 +27,7 @@ public class Tender {
         return about;
     }
 
-    public ArrayList<TenderOffer> getOffers() {
+    public List<TenderOffer> getOffers() {
         return offers;
     }
 
@@ -41,6 +41,10 @@ public class Tender {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public boolean isOwner(String other) {
+        return owner.equals(other);
     }
 
     @Override

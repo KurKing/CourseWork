@@ -1,7 +1,8 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.exceptions.IncorrectPasswordException;
-import com.kpi.it01.kurkin.coursework.exceptions.NotSignUpException;
+import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
 import javax.servlet.ServletException;
@@ -19,46 +20,38 @@ public class LoginProcessRequestDecorator extends ProcessRequestDecorator {
     }
 
     @Override
-    public void executePost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executePost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
-
             request.getSession().setAttribute("user",
                     userService.logIn(
                             request.getParameter("email").trim(),
                             request.getParameter("password").trim()
                     )
             );
-
-        } catch (NotSignUpException e) {
-
+        } catch (NoIdException e) {
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request, response,"signup");
             return;
-
         } catch (IncorrectPasswordException | IllegalArgumentException e) {
-
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request, response,"login");
             return;
-
         } catch (NullPointerException e) {
-
             request.setAttribute("errorMessage", "Empty fields!");
             forwardToJsp(request, response,"login");
             return;
-
-        } catch (NoSuchAlgorithmException e) {
-
+        } catch (NoSuchAlgorithmException | DataBaseErrorException e) {
             request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
             return;
-
         }
 
         response.sendRedirect(request.getContextPath()+"/tenders/");
     }
 
     @Override
-    public void executeGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void executeGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         forwardToJsp(request, response,"login");
     }
 }

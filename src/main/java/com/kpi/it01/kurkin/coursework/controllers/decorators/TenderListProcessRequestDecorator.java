@@ -1,5 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 
@@ -16,13 +17,13 @@ public class TenderListProcessRequestDecorator extends ProcessRequestDecorator {
     }
 
     private void tendersList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, DataBaseErrorException {
         request.setAttribute("tenders", tenderService.getTenders());
         forwardToJsp(request, response, "tendersList");
     }
 
     private void ownerTenderList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, DataBaseErrorException {
         User owner = (User) request.getSession().getAttribute("user");
         if (owner != null) {
             request.setAttribute("tenders", tenderService.getTendersWithOwner(owner.getLogin()));
@@ -35,12 +36,15 @@ public class TenderListProcessRequestDecorator extends ProcessRequestDecorator {
     @Override
     public void executeGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null) { pathInfo = "/"; }
-        if (pathInfo.equals("/myTenders")) {
-            ownerTenderList(request, response);
-        } else {
-            tendersList(request, response);
+        try {
+            if ("/myTenders".equals(request.getPathInfo())) {
+                ownerTenderList(request, response);
+            } else {
+                tendersList(request, response);
+            }
+        } catch (DataBaseErrorException e) {
+            request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
+            return;
         }
     }
 }

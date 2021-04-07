@@ -1,6 +1,7 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
-import com.kpi.it01.kurkin.coursework.exceptions.AlreadySignUpException;
+import com.kpi.it01.kurkin.coursework.exceptions.AlreadyExistsException;
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.exceptions.PasswordMismatchException;
 import com.kpi.it01.kurkin.coursework.services.UserService;
 
@@ -26,11 +27,11 @@ public class SignUpProcessRequestDecorator extends ProcessRequestDecorator {
                     request.getParameter("password"),
                     request.getParameter("password2")
             );
-        }  catch (PasswordMismatchException | NullPointerException | IllegalArgumentException | AlreadySignUpException e) {
+        }  catch (PasswordMismatchException | NullPointerException | IllegalArgumentException | AlreadyExistsException e) {
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request, response, "signup");
             return;
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | DataBaseErrorException e) {
             request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
             return;
         }

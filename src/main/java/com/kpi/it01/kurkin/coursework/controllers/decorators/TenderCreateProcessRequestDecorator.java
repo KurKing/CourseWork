@@ -1,5 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.models.User;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 
@@ -32,6 +33,9 @@ public class TenderCreateProcessRequestDecorator extends ProcessRequestDecorator
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", e.getLocalizedMessage());
             forwardToJsp(request,  response, "newTender");
+            return;
+        } catch (DataBaseErrorException e) {
+            request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
             return;
         }
         response.sendRedirect(request.getContextPath()+"/tenders/");

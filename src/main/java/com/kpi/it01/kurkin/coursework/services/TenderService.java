@@ -1,88 +1,62 @@
 package com.kpi.it01.kurkin.coursework.services;
 
-import com.kpi.it01.kurkin.coursework.dal.DataBase;
+import com.kpi.it01.kurkin.coursework.dao.interfaces.DaoFactory;
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.exceptions.NoIdException;
-import com.kpi.it01.kurkin.coursework.exceptions.NoTenderWithIdException;
 import com.kpi.it01.kurkin.coursework.exceptions.NotOwnerException;
 import com.kpi.it01.kurkin.coursework.models.Tender;
 import com.kpi.it01.kurkin.coursework.models.TenderOffer;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
-public class TenderService extends Service {
-    private DataBase db;
 
-    public TenderService(DataBase db) {
-        this.db = db;
+import static com.kpi.it01.kurkin.coursework.utils.Validator.getValidatedString;
+
+public class TenderService {
+    private DaoFactory daoFactory;
+
+    public TenderService(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
-    public ArrayList<Tender> getTenders() {
-        try {
-           return db.getTenders();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<Tender>();
+    public List<Tender> getTenders() throws DataBaseErrorException {
+        return daoFactory.getTenderDao().getAll();
     }
 
-    public ArrayList<Tender> getTendersWithOwner(String owner) {
-        try {
-            return db.getTendersWithOwner(owner);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<Tender>();
+    public List<Tender> getTendersWithOwner(String owner) throws DataBaseErrorException {
+        return daoFactory.getTenderDao().getAllWithOwner(owner);
     }
 
-    public ArrayList<Tender> getTendersByName(String name) {
-        try {
-            return db.getTendersByName(name);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<Tender>();
+    public List<Tender> getTendersByName(String name) throws DataBaseErrorException {
+        return daoFactory.getTenderDao().getAllWithName(name);
     }
 
-    public Tender getTenderWithId(String id) throws IllegalArgumentException, NoTenderWithIdException {
-
-        if (id.isEmpty()) { throw new IllegalArgumentException(); }
-
-        try {
-            return db.getTenderWithId(id);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    public Tender getTenderWithId(String id) throws IllegalArgumentException, DataBaseErrorException, NoIdException {
+        id = getValidatedString(id, "Id");
+        return daoFactory.getTenderDao().get(id);
     }
 
-    public void setTenderStatus(String tenderId, String owner, Boolean isActive) throws InterruptedException, NoTenderWithIdException, ExecutionException, NotOwnerException, IllegalArgumentException {
+    public void setTenderStatus(String tenderId, String owner, Boolean isActive)
+            throws IllegalArgumentException, NotOwnerException, NoIdException, DataBaseErrorException {
         if (tenderId.isEmpty()) { throw new IllegalArgumentException(); }
 
-        if (owner.equals(db.getTenderOwner(tenderId))){
-            db.updateTenderData(tenderId, "isActive", isActive);
+        if (owner.equals(daoFactory.getTenderDao().getTenderOwner(tenderId))){
+            daoFactory.getTenderDao().updateStatus(tenderId, isActive);
             return;
         }
 
         throw new NotOwnerException();
     }
 
-    public void deleteTender(String tenderId, String owner) {
-        try {
-            if (owner.equals(db.getTenderOwner(tenderId))){
-                db.deleteTender(tenderId);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void deleteTender(String tenderId, String owner) throws NoIdException, DataBaseErrorException {
+        if (owner.equals(daoFactory.getTenderDao().getTenderOwner(tenderId))){
+            daoFactory.getTenderDao().delete(tenderId);
+            return;
         }
     }
 
-    public void createNewTender(String name, String owner, String about) throws IllegalArgumentException {
+    public void createNewTender(String name, String owner, String about)
+            throws IllegalArgumentException, DataBaseErrorException {
         name = getValidatedString(name, "Name");
         about = getValidatedString(about, "About");
 
@@ -94,10 +68,12 @@ public class TenderService extends Service {
                 name,
                 true
         );
-        db.createTender(tender);
+
+        daoFactory.getTenderDao().create(tender);
     }
 
-    public void createNewOffer(String text, String money, String tenderId, String userLogin) throws IllegalArgumentException, NoIdException {
+    public void createNewOffer(String text, String money, String tenderId, String userLogin)
+            throws IllegalArgumentException, NoIdException, DataBaseErrorException {
         text = getValidatedString(text, "Text");
         money = getValidatedString(money, "Money");
 
@@ -115,6 +91,6 @@ public class TenderService extends Service {
             throw new NoIdException();
         }
 
-        db.createOffer(new TenderOffer(userLogin, text, money, tenderId));
+        daoFactory.getTenderOfferDao().create(new TenderOffer(userLogin, text, money, tenderId));
     }
 }

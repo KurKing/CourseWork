@@ -1,5 +1,6 @@
 package com.kpi.it01.kurkin.coursework.controllers.decorators;
 
+import com.kpi.it01.kurkin.coursework.exceptions.DataBaseErrorException;
 import com.kpi.it01.kurkin.coursework.services.TenderService;
 
 import javax.servlet.ServletException;
@@ -17,15 +18,17 @@ public class TenderWithNameProcessRequestDecorator extends ProcessRequestDecorat
     @Override
     public void executeGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String searchString = request.getParameter("search");
-        if (searchString != null){
-            searchString = searchString.trim();
-            if (!searchString.isEmpty()){
+        try {
+            String searchString = request.getParameter("search");
+            if (searchString != null && !searchString.isEmpty()){
                 request.setAttribute("tenders", tenderService.getTendersByName(searchString));
                 forwardToJsp(request, response, "tendersList");
                 return;
             }
+            forwardToJsp(request, response, "tenderSearch");
+        } catch (DataBaseErrorException e) {
+            request.getRequestDispatcher("/WEB-INF/undefinedError.html").forward(request, response);
+            return;
         }
-        forwardToJsp(request, response, "tenderSearch");
     }
 }
