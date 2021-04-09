@@ -40,6 +40,6 @@ public class SignUpProcessRequestDecorator extends ProcessRequestDecorator {
 
     @Override
     public void executeGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        forwardToJsp(request, response, "signup.jsp");
+        forwardToJsp(request, response, "signup");
     }
 }
